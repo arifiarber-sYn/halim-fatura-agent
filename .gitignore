@@ -1,3 +1,2 @@
-server.py
 *.bak-*
 __pycache__/
