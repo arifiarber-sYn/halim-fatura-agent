@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """halim-konzola — agjenti me fatura (prototip per Meta hackathon)."""
-import hashlib, json, os, pathlib, re, sys, time
+import hashlib, json, os, pathlib, re, subprocess, sys, time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 sys.path.insert(0, "/home/kllosha/oa-korpus")
@@ -45,9 +45,14 @@ code{color:#9fd3ff}</style></head><body>
 <h1>Halimi — agjenti me fatura</h1>
 <p>Kërko diçka. Agjenti vepron dhe lë provë për çdo hap.</p>
 <input id="q" value="Sa kontrata ka prokurimi 2025-2026?">
-<button onclick="kerko()">Kërko</button>
+<button onclick="kerko()">Kërko</button> <button onclick="zet()">Zetaris live</button>
 <div id="out"></div>
 <script>
+async function zet(){
+  const r=await fetch("/api/zet",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sql:"SELECT 1 AS one"})});
+  const d=await r.json();
+  document.getElementById("out").innerHTML="<div class=\"karta\">ZETARIS LIVE\nok: "+d.ok+"\nrreshta: "+JSON.stringify(d.rreshta)+"\nms: "+d.ms+"\nvia: "+d.via+"</div>";
+}
 async function kerko(){
   const q=document.getElementById("q").value;
   const r=await fetch("/api/kerko",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pyetja:q})});
@@ -84,6 +89,27 @@ def _lexo_audit() -> dict:
     return {"total": n, "sot": sot_n}
 
 
+
+
+ZET_LEJUAR = ("select 1", "show catalogs")
+
+
+def zetaris(sql: str) -> dict:
+    """Veprim i vetem i lejuar kundrejt Zetaris: prova e lidhjes live."""
+    n = " ".join((sql or "").lower().split())
+    if not any(n.startswith(x) for x in ZET_LEJUAR):
+        return {"ok": False, "gabim": "vetem SELECT 1 dhe SHOW CATALOGS lejohen ne demo", "rreshta": []}
+    t0 = time.time()
+    try:
+        r = subprocess.run(["python3", "/home/kllosha/oa-korpus/zet_query.py", sql],
+                           capture_output=True, text=True, timeout=90)
+        out = (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        return {"ok": False, "gabim": str(e)[:120], "rreshta": []}
+    rreshta = [x.strip() for x in out.splitlines() if x.strip().startswith("(")]
+    ok = bool(rreshta)
+    return {"ok": ok, "sql": sql, "rreshta": rreshta[:10], "ms": int((time.time() - t0) * 1000),
+            "via": "zetaris-thrift", "gabim": "" if ok else out.strip()[-160:]}
 
 def _fundi_i_zinxhirit() -> str:
     """Hash-i i fatures se fundit — lidhja e zinxhirit."""
@@ -178,6 +204,17 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/", "/index.html"):
             return self._d(FAQJA.encode(), "text/html; charset=utf-8")
+        if self.path == "/demo.mp4":
+            f = pathlib.Path("/home/kllosha/meta-console/demo-halimi.mp4")
+            if not f.exists():
+                return self._d(b"pa video", "text/plain", 404)
+            b = f.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "video/mp4")
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+            return
         if self.path == "/health":
             return self._d(json.dumps({"ok": True}).encode())
         if self.path == "/api/verifiko":
@@ -185,6 +222,13 @@ class H(BaseHTTPRequestHandler):
         return self._d(json.dumps({"gabim": "not found"}).encode(), k=404)
 
     def do_POST(self):
+        if self.path == "/api/zet":
+            n = int(self.headers.get("Content-Length") or 0)
+            try:
+                d = json.loads(self.rfile.read(n).decode())
+            except Exception:
+                return self._d(json.dumps({"gabim": "json"}).encode(), k=400)
+            return self._d(json.dumps(zetaris(d.get("sql") or ""), ensure_ascii=False).encode())
         if self.path != "/api/kerko":
             return self._d(json.dumps({"gabim": "not found"}).encode(), k=404)
         n = int(self.headers.get("Content-Length") or 0)
