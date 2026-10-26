@@ -10,7 +10,7 @@ problem statement *Build for Your World*.
 
 ## Demo
 
-- Video 3-minutëshe: [`demo-halimi-3min.mp4`](demo-halimi-3min.mp4)
+- Video 3-minutëshe: [`demo-halimi-178s.mp4`](demo-halimi-178s.mp4)
 - Matje reale me Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
 
 ## Tri shtresa
