@@ -48,26 +48,32 @@ code{color:#9fd3ff}</style></head><body>
 <button onclick="kerko()">Kërko</button> <button onclick="zet()">Zetaris live</button>
 <div id="out"></div>
 <script>
-async function zet(){
-  const r=await fetch("/api/zet",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sql:"SELECT 1 AS one"})});
-  const d=await r.json();
-  document.getElementById("out").innerHTML="<div class=\"karta\">ZETARIS LIVE\nok: "+d.ok+"\nrreshta: "+JSON.stringify(d.rreshta)+"\nms: "+d.ms+"\nvia: "+d.via+"</div>";
-}
+const NL=String.fromCharCode(10);
 async function kerko(){
-  const q=document.getElementById("q").value;
-  const r=await fetch("/api/kerko",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pyetja:q})});
+  const q=document.getElementById('q').value;
+  const r=await fetch('api/kerko',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pyetja:q})});
+  const d=await r.json(); shfaq(d);
+}
+async function zet(){
+  const r=await fetch('api/zet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sql:'SELECT 1 AS one'})});
   const d=await r.json();
-  let h="";
-  if(d.pergjigja){h+="<div class=\"karta\">"+d.pergjigja.replace(/</g,"&lt;")+"</div>";}
+  const out=document.getElementById('out'); out.textContent='';
+  const c=document.createElement('div'); c.className='karta';
+  c.textContent='ZETARIS LIVE'+NL+'ok: '+d.ok+NL+'rreshta: '+JSON.stringify(d.rreshta)+NL+'ms: '+d.ms+NL+'via: '+d.via;
+  out.appendChild(c);
+}
+function shfaq(d){
+  const out=document.getElementById('out'); out.textContent='';
+  if(d.pergjigja){const c=document.createElement('div');c.className='karta';c.textContent=d.pergjigja;out.appendChild(c);}
   const f=d.fatura||{};
-  h+="<div class=\"karta "+(f.refuzuar?"refuzim":"fatura")+"\"><b>FATURA</b>";
-  h+="\n"+ (f.hapat||[]).map((x,i)=>"  "+(i+1)+". "+x).join("\n");
-  h+="\n\nmjete: "+((f.mjete||[]).join(", ")||"-");
-  h+="\nkohe: "+(f.ms||0)+" ms";
-  h+="\nrefuzuar: "+(f.refuzuar?"PO — "+f.arsyeja:"jo");
-  h+="\nprove: "+(f.hash||"").slice(0,24)+"...";
-  h+="</div>";
-  document.getElementById("out").innerHTML=h;
+  const c=document.createElement('div'); c.className='karta '+(f.refuzuar?'refuzim':'fatura');
+  let t='FATURA'+NL;
+  (f.hapat||[]).forEach(function(x,i){t+=(i+1)+'. '+x+NL;});
+  t+='mjete: '+((f.mjete||[]).join(', ')||'-')+NL;
+  t+='kohe: '+(f.ms||0)+' ms'+NL;
+  t+='refuzuar: '+(f.refuzuar?('PO - '+f.arsyeja):'jo')+NL;
+  t+='prove: '+(f.hash||'').slice(0,24)+'...';
+  c.textContent=t; out.appendChild(c);
 }
 </script></body></html>"""
 
