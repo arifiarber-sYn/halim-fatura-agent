@@ -3,7 +3,8 @@
 import hashlib, json, os, pathlib, re, subprocess, sys, time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-sys.path.insert(0, "/home/kllosha/oa-korpus")
+KORPUS = pathlib.Path(os.environ.get("OA_KORPUS", str(pathlib.Path.home() / "oa-korpus")))
+sys.path.insert(0, str(KORPUS))
 try:
     from pyet import pergjigju as prokurimi
 except Exception:
@@ -107,7 +108,7 @@ def zetaris(sql: str) -> dict:
         return {"ok": False, "gabim": "vetem SELECT 1 dhe SHOW CATALOGS lejohen ne demo", "rreshta": []}
     t0 = time.time()
     try:
-        r = subprocess.run(["python3", "/home/kllosha/oa-korpus/zet_query.py", sql],
+        r = subprocess.run(["python3", str(KORPUS / "zet_query.py"), sql],
                            capture_output=True, text=True, timeout=90)
         out = (r.stdout or "") + (r.stderr or "")
     except Exception as e:
@@ -211,7 +212,9 @@ class H(BaseHTTPRequestHandler):
         if self.path in ("/", "/index.html"):
             return self._d(FAQJA.encode(), "text/html; charset=utf-8")
         if self.path == "/demo.mp4":
-            f = pathlib.Path("/home/kllosha/meta-console/demo-halimi.mp4")
+            f = pathlib.Path(os.environ.get(
+                "HALIM_DEMO",
+                str(pathlib.Path(__file__).resolve().parent / "demo-halimi-178s.mp4")))
             if not f.exists():
                 return self._d(b"pa video", "text/plain", 404)
             b = f.read_bytes()

@@ -50,3 +50,21 @@ Me `reasoning_effort: "minimal"` dhe buxhet ≥400 tokenësh, përgjigjja del e 
 - Çelësat nuk ruhen në repo; lexohen nga thesari lokal ose mjedisi.
 - Refuzimi është pjesë e sjelljes: nxjerrja e skedarëve jashtë makines bllokohet me arsye të shfaqur.
 - Fatura është e verifikueshme: `GET /api/verifiko` → `{"ok": true, "n": …}`; ndryshimi i një rreshti e prish zinxhirin.
+## Nisja lokale (pa shtigje të makinës sime)
+
+Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
+
+| Variabli | Defaulti | Roli |
+|---|---|---|
+| `OA_KORPUS` | `~/oa-korpus` | ku ndodhet `pyet.py` dhe `zet_query.py` |
+| `HALIM_LOG` | `~/.openclaw/state/halim-konzola.jsonl` | regjistri i faturave (zinxhiri) |
+| `HALIM_DEMO` | `demo-halimi-178s.mp4` pranë `server.py` | videoja që shërbehet te `/demo.mp4` |
+| `META_BASE_URL` / `META_API_KEY` / `META_MODEL` | — | vetëm për `scripts/meta_prova.py` |
+
+```bash
+python3 server.py                      # http://127.0.0.1:8092
+python3 tests/test_server.py           # 5/5, pa rrjet
+python3 scripts/meta_prova.py 5        # matje e Meta Model API (kërkon çelës)
+```
+
+Çelësi i Meta-s nuk ruhet në repo: lexohet nga mjedisi ose nga thesari lokal.
