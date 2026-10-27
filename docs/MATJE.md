@@ -24,3 +24,28 @@
       python3 scripts/meta_prova.py 5
 
 Çelësi nuk ruhet në repo: lexohet nga thesari lokal ose nga mjedisi.
+---
+
+## Modeli i dytë — `muse-spark-1.3` (27.10.2026)
+
+**Roli:** propozon një deklaratë SQL nga qëllimi. **Nuk ekzekuton asgjë.**
+**Flamuri:** `HALIM_SQL_MODEL=meta`. Pa flamurin, `sql_meta.propozo()` kthen `None`
+dhe sjellja mbetet saktësisht si më parë — pa rrjet, pa kosto.
+
+| Prova | Rezultati |
+|---|---|
+| Pyetja | «Sa kontrata prokurimi ka gjatë 2025–2026?» |
+| SQL i propozuar | `SELECT COUNT(*) FROM AVOKATIM.ocds_awards WHERE date BETWEEN DATE '2025-01-01' AND DATE '2026-12-31'` |
+| Latenca | **1.785 s** |
+| Modeli | `muse-spark-1.3` |
+| **Porta** | **refuzon** — vetëm `SELECT 1` dhe `SHOW CATALOGS` lejohen në demo |
+
+Kjo është prova qendrore e tezës: modeli jep një deklaratë të saktë dhe të dobishme,
+por **nuk ka pushtet ta ekzekutojë**. `sql_meta.lejohet()` kthen `(False, ...)` dhe
+fatura e shënon refuzimin me arsyen.
+
+**Dallim i matur midis modeleve:** `muse-wonder-1.0` (kuptim, tekst i lirë) mesatarisht
+8.08 s; `muse-spark-1.3` (dalje e strukturuar) **1.79 s**. Një rol më i ngushtë, më i shpejtë.
+
+Prova: `tests/test_sql_meta.py` — 4/4 (flamuri i fikur nuk bën rrjet; `DROP` refuzohet;
+`SELECT 1` lejohet; pastrimi i markdown-it nxjerr SQL-në).

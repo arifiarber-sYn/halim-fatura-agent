@@ -33,15 +33,21 @@ dhe pse. Fatura lidhen me zinxhir hash-esh.
 | Base URL | `https://api.meta.ai/v1` |
 | Rol në arkitekturë | shtresa e **kuptimit**: kërkesa → qëllim i strukturar |
 | Matje | 5/5 përfunduan, latencë 4.99–12.24 s (mesatare 8.08 s) |
+| Modeli i dytë | `muse-spark-1.3` — propozon SQL nga qëllimi, latencë **1.785 s**; nuk ekzekuton asgjë |
 | Zbulim teknik | modeli e harxhon buxhetin në arsyetim: **~49 % e token-ëve** (1 270 nga 2 585). Me buxhet 32 tokenësh `content` del bosh; me `reasoning_effort="minimal"` dhe buxhet ≥400, 5/5 të plota |
 
 **Prova:** `docs/MATJE.md` (matje reale, jo pretendime) · `scripts/meta_prova.py` (riprodhueshme).
 
-### Boshllëku, i thënë hapur
+### Dy modele, dy role (27.10.2026)
 
-Sot përdoret **një** model Meta. Ky kriter peshon 25 %; një model i vetëm në një rol të vetëm është
-provë e dobët për atë peshë. Hapi i radhës i planifikuar: një model i dytë Meta në një rol të dallueshëm
-(p.sh. gjenerimi i SQL-së nga qëllimi, ose përmbledhja e provave), i matur dhe i dokumentuar njësoj.
+| Modeli | Roli | Latenca |
+|---|---|---|
+| `muse-wonder-1.0` | kuptimi: kërkesa → qëllim | 8.08 s mesatare |
+| `muse-spark-1.3` | propozim SQL nga qëllimi | **1.785 s** |
+
+Propozimi **nuk ekzekutohet**: `sql_meta.lejohet()` e kalon nëpër të njëjtën portë
+(`SELECT 1` / `SHOW CATALOGS`) dhe e refuzon atë që s'lejohet. Kjo është teza e projektit,
+e provuar me dy modele: **modeli shton aftësi, jo pushtet.**
 
 ---
 

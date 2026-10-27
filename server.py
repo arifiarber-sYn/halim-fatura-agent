@@ -10,6 +10,12 @@ try:
 except Exception:
     prokurimi = None
 
+try:
+    from sql_meta import propozo as propozo_sql, lejohet as sql_lejohet
+except Exception:
+    propozo_sql = None
+    sql_lejohet = None
+
 STATE = pathlib.Path.home() / ".openclaw" / "state"
 LOG = pathlib.Path(os.environ.get("HALIM_LOG", str(STATE / "halim-konzola.jsonl")))
 AUDIT = STATE / "action_audit.jsonl"
@@ -238,6 +244,22 @@ class H(BaseHTTPRequestHandler):
             except Exception:
                 return self._d(json.dumps({"gabim": "json"}).encode(), k=400)
             return self._d(json.dumps(zetaris(d.get("sql") or ""), ensure_ascii=False).encode())
+        if self.path == "/api/propozo":
+            n = int(self.headers.get("Content-Length") or 0)
+            try:
+                d = json.loads(self.rfile.read(n).decode())
+            except Exception:
+                return self._d(json.dumps({"gabim": "json"}).encode(), k=400)
+            kerkesa = (d.get("kerkesa") or "").strip()
+            p = propozo_sql(kerkesa) if propozo_sql else None
+            if p is None:
+                return self._d(json.dumps({"propozoi": None,
+                    "arsye": "HALIM_SQL_MODEL nuk eshte 'meta' — sjellja e vjeter"},
+                    ensure_ascii=False).encode())
+            ok, arsye = sql_lejohet(p.get("sql", "")) if sql_lejohet else (False, "porta mungon")
+            p["lejuar"] = ok
+            p["porta"] = arsye or "lejohet"
+            return self._d(json.dumps(p, ensure_ascii=False).encode())
         if self.path != "/api/kerko":
             return self._d(json.dumps({"gabim": "not found"}).encode(), k=404)
         n = int(self.headers.get("Content-Length") or 0)
