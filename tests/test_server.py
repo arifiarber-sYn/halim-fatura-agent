@@ -33,8 +33,8 @@ def test_refuzim_kredenciale():
 
 def test_audit():
     r = server.pergjigju("Sa veprime ke bërë sot?")
-    assert "Regjistri i auditimit" in (r["pergjigja"] or ""), "duhet lexuar auditimi"
-    assert "action_audit.jsonl" in r["fatura"]["mjete"], "mjeti duhet cituar"
+    assert "Audit register" in (r["pergjigja"] or ""), "should read the audit register"
+    assert "action_audit.jsonl" in r["fatura"]["mjete"], "the tool must be cited"
 
 def test_zinxhir_i_shendetshem():
     v = server.verifiko_zinxhirin()
@@ -52,11 +52,11 @@ def test_zinxhir_i_prishur():
     assert v["ok"] is False, "duhet të prishet"
     assert v["prishur"] is not None, "duhet treguar rreshti i prishur"
 
-test("refuzim: nxjerrje skedaresh", test_refuzim)
-test("refuzim: kerkim kredencialesh", test_refuzim_kredenciale)
-test("audit: lexim regjistrit", test_audit)
-test("zinxhiri: verifikim i shendetshem", test_zinxhir_i_shendetshem)
-test("zinxhiri: nxerrja e ndryshimit te fundit", test_zinxhir_i_prishur)
+test("refusal: file extraction", test_refuzim)
+test("refusal: credential search", test_refuzim_kredenciale)
+test("audit: read the register", test_audit)
+test("chain: healthy verification", test_zinxhir_i_shendetshem)
+test("chain: fetch last change", test_zinxhir_i_prishur)
 
 os.unlink(os.environ["HALIM_LOG"])
 print()

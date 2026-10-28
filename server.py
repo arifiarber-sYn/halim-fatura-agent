@@ -28,7 +28,7 @@ def _norm(s: str) -> str:
 
 
 def _e_ndaluar(kerkesa: str):
-    """Kontroll me bashk-ndodhi, jo me rend fjalesh — gjuha reale eshte e çrregullt."""
+    """Co-occurrence check, not word order - real language is messy."""
     n = _norm(kerkesa)
     ka_skedar = any(w in n for w in ("skedar", "dokument", "file", "te dhena"))
     ka_dergim = any(w in n for w in ("derg", "derp", "posto", "co ", "adres", "email", "upload", "perco"))
@@ -50,9 +50,9 @@ button{padding:12px 20px;margin-top:8px;font-size:16px;background:#2d6cdf;color:
 .refuzim{border-left:3px solid #d9534f}
 code{color:#9fd3ff}</style></head><body>
 <h1>Halimi — agjenti me fatura</h1>
-<p>Kërko diçka. Agjenti vepron dhe lë provë për çdo hap.</p>
+<p>Ask something. The agent acts and leaves proof for every step.</p>
 <input id="q" value="Sa kontrata ka prokurimi 2025-2026?">
-<button onclick="kerko()">Kërko</button> <button onclick="zet()">Zetaris live</button>
+<button onclick="kerko()">Ask</button> <button onclick="zet()">Zetaris live</button>
 <div id="out"></div>
 <script>
 const NL=String.fromCharCode(10);
@@ -168,26 +168,26 @@ def pergjigju(kerkesa: str) -> dict:
     i_ndaluar, arsye_p = _e_ndaluar(kerkesa)
     if i_ndaluar:
         refuzuar, arsye = True, arsye_p
-        hapat = ["kuptova kerkësen", "kontrollova politikën e sigurisë", "refuzova: " + arsye_p]
+        hapat = ["understood the request", "checked the security policy", "refused: " + arsye_p]
         mjete = ["politika"]
 
     if not refuzuar:
         if re.search(r"kontrat|prokurim|furnizues|award|ocds", n):
-            hapat = ["kuptova: pyetje mbi prokurimin", "hapja bazën read-only", "ekzekutova SQL", "citova burimin OCDS"]
+            hapat = ["understood: procurement question", "opened the database read-only", "executed SQL", "cited the OCDS source"]
             mjete = ["sqlite", "pyet.py"]
             try:
-                pergjigja = prokurimi(kerkesa) if prokurimi else "Motorri i prokurimit nuk u ngarkua."
+                pergjigja = prokurimi(kerkesa) if prokurimi else "The procurement engine did not load."
             except Exception as e:
-                pergjigja = "Gabim: " + str(e)[:120]
+                pergjigja = "Error: " + str(e)[:120]
         elif re.search(r"veprim|audit|gjurm|log|sa ke bere", n):
             a = _lexo_audit()
             hapat = ["kuptova: pyetje mbi aktivitetin", "lexova regjistrin e auditimit"]
             mjete = ["action_audit.jsonl"]
-            pergjigja = "Regjistri i auditimit: " + str(a["total"]) + " hyrje gjithsej, " + str(a["sot"]) + " sot."
+            pergjigja = "Audit register: " + str(a["total"]) + " entries in total, " + str(a["sot"]) + " today."
         else:
-            hapat = ["kuptova kerkësen", "nuk gjeta mjet të përshtatshëm"]
+            hapat = ["understood the request", "found no suitable tool"]
             mjete = []
-            pergjigja = "Nuk e kuptova kërkesën. Provo: prokurim, auditim, ose një kërkesë që duhet refuzuar."
+            pergjigja = "I did not understand the request. Try: procurement, audit, or a request that must be refused."
 
     ms = int((time.time() - t0) * 1000)
     fat = {"kerkesa": kerkesa[:300], "hapat": hapat, "mjete": mjete, "ms": ms,
