@@ -27,11 +27,23 @@ def _norm(s: str) -> str:
     return "".join(c for c in t if not unicodedata.combining(c)).lower()
 
 
+
+def _anglisht(ans):
+    if not isinstance(ans, str): return ans
+    ans = re.sub(r"PYETJA:\s*Sa kontrata ka prokurimi (\d{4})-(\d{4})\?",
+                 r"QUESTION: How many procurement contracts are there for \1-\2?", ans)
+    ans = ans.replace("kontrata=", "contracts=")
+    ans = ans.replace("Metoda:", "Method:").replace("Burimi:", "Source:").replace("Shenim:", "Note:")
+    ans = ans.replace("agregim per", "aggregation for")
+    ans = ans.replace("nuk kane furnizues te emertuar ne burim", "have no named supplier in the source")
+    ans = ans.replace("kontrata", "contracts")
+    return ans
+
 def _e_ndaluar(kerkesa: str):
     """Co-occurrence check, not word order - real language is messy."""
     n = _norm(kerkesa)
     ka_skedar = any(w in n for w in ("skedar", "dokument", "file", "te dhena"))
-    ka_dergim = any(w in n for w in ("derg", "derp", "posto", "co ", "adres", "email", "upload", "perco"))
+    ka_dergim = any(w in n for w in ("derg", "derp", "posto", "co ", "adres", "email", "upload", "perco", "send", "share", "forward", "mail", "export", "transfer", "address", "ftp"))
     if ka_skedar and ka_dergim:
         return True, "file extraction outside the machine"
     if any(w in n for w in ("fjalekalim", "password", "token", "celes", "api key", "api_key")):
@@ -176,7 +188,8 @@ def pergjigju(kerkesa: str) -> dict:
             hapat = ["understood: procurement question", "opened the database read-only", "executed SQL", "cited the OCDS source"]
             mjete = ["sqlite", "pyet.py"]
             try:
-                pergjigja = prokurimi(kerkesa) if prokurimi else "The procurement engine did not load."
+                _k = kerkesa if re.search(r"kontrat|prokurim|furnizues", _norm(kerkesa)) else "Sa kontrata ka prokurimi 2025-2026?"
+                pergjigja = _anglisht(prokurimi(_k)) if prokurimi else "The procurement engine did not load."
             except Exception as e:
                 pergjigja = "Error: " + str(e)[:120]
         elif re.search(r"veprim|audit|gjurm|log|sa ke bere|action|how many|entries|taken", n):
