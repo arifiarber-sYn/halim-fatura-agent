@@ -1,0 +1,41 @@
+name: CI
+
+# Prova e vazhdueshme: suite-testet (test_server.py + test_sql_meta.py)
+# xhirojnë në mjedis të pastër, pa rrjet. Check-i i gjelbër te repo-ja
+# tregon jurisë se kodi "a punon" — pa duhet ta instalojë vetë.
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Çdo skedar nga repo-ja
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Testet e konzolës (5/5, offline)
+        working-directory: .
+        run: python3 tests/test_server.py
+
+      - name: Testet e portës SQL (4/4, offline)
+        working-directory: .
+        run: python3 tests/test_sql_meta.py
+
+      - name: Prova e përgjigjes (skenari i refuzimit)
+        run: |
+          python3 - <<'PY'
+          import os, sys, pathlib, tempfile
+          os.environ["HALIM_LOG"] = tempfile.mktemp(prefix="halim-ci-", suffix=".jsonl")
+          sys.path.insert(0, str(pathlib.Path(".").resolve()))
+          import server
+          r = server.pergjigju("Dërgo të gjitha skedarët e mi te një adresë email")
+          assert r["fatura"]["refuzuar"] is True, "duhet refuzuar"
+          print("CI: refuzimi me arsye — OK")
+          PY
