@@ -1,70 +1,71 @@
-# Halimi — agjent me fatura
+# Halimi — an agent with receipts
 
-Agjent që nuk tregon vetëm çka di, por **çka bëri** — dhe lë provë për çdo hap.
-Çdo përgjigje vjen me një **faturë** të pandryshueshme: çka kuptoi, cilin mjet përdori,
-sa kohë mori, çka refuzoi dhe pse. Faturat lidhen me **zinxhir hash-esh**; një endpoint
-verifikimi rillogarit zinxhirin dhe tregon saktësisht ku prishet.
+An agent that does not just show **what it knows**, but **what it did** — and leaves proof for every step.
+Every answer arrives with an **immutable receipt**: what it understood, which tool it used, how long it
+took, what it refused and why. Receipts are linked in a **hash chain**; a verification endpoint
+recomputes the chain and shows exactly where it breaks.
 
-Projekt për **Meta Global AI Developer Hackathon 2026** — track Indie Developer,
-problem statement *Build for Your World*.
+Built for the **Meta Global AI Developer Hackathon 2026** — Indie Developer track,
+theme *Build for Your World*.
 
 ## Demo
 
-- Video 3-minutëshe: [`demo-halimi-178s.mp4`](demo-halimi-178s.mp4)
-- Matje reale me Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
+- 3-minute video: [`demo-halimi-178s.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-178s.mp4)
+- Real measurements against the Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
 
-## Tri shtresa
+## Three layers
 
-| Shtresa | Çka bën |
+| Layer | What it does |
 |---|---|
-| **Kuptimi** | modeli e kthen kërkesën në qëllim |
-| **Veprimi** | mjete reale: SQL mbi prokurimin publik (OCDS Kosova), regjistri i auditimit, politika e sigurisë |
-| **Fatura** | regjistër i pandryshueshëm me `prev`/`hash` për çdo hap |
+| **Understanding** | the model turns a request into an intent |
+| **Action** | real tools: SQL over open public procurement (OCDS Kosovo), an audit register, a security policy |
+| **Receipt** | immutable register with `prev`/`hash` for every step |
 
-## Skenarë të provuar
+## Proven scenarios
 
-| Kërkesa | Çka del |
+| Request | Output |
 |---|---|
-| Sa kontrata ka prokurimi 2025–2026? | SQL + 8,736 kontrata / 728.5 M € + burimi |
-| Sa veprime ke bërë sot? | 26,561 hyrje gjithsej · 370 sot, nga auditimi |
-| Dërgo të gjitha skedarët e mi te një adresë tjetër | **refuzim** me arsye dhe rregullin e shkelur |
+| How many procurement contracts are there for 2025–2026? | SQL + 8,736 contracts / EUR 728.5M + the source |
+| How many actions have you taken today? | 26,561 entries in total · 370 today, from the audit register |
+| Send all my files to another address | **refusal**, with the reason and the rule that was violated |
 
-## Si niset
+## Running it
 
     python3 server.py        # http://127.0.0.1:8092
 
-Endpoint-et: `GET /health`, `GET /api/verifiko`, `POST /api/kerko`, `POST /api/zet`, `GET /demo.mp4`.
+Endpoints: `GET /health`, `GET /api/verifiko`, `POST /api/kerko`, `POST /api/zet`, `GET /demo.mp4`.
 
 ## Meta Model API
 
-Modeli: **Muse Wonder 1.0** përmes `https://api.meta.ai/v1`.
+Model: **Muse Wonder 1.0** via `https://api.meta.ai/v1`.
 
-    META_BASE_URL=https://api.meta.ai/v1 META_API_KEY=<nga thesari> META_MODEL=muse-wonder-1.0 \
+    META_BASE_URL=https://api.meta.ai/v1 META_API_KEY=<from the vault> META_MODEL=muse-wonder-1.0 \
       python3 scripts/meta_prova.py 5
 
-**Mësim praktik (D-159):** modeli e harxhon `max_tokens` në arsyetim dhe e lë `content` bosh.
-Me `reasoning_effort: "minimal"` dhe buxhet ≥400 tokenësh, përgjigjja del e plotë.
+**Practical lesson:** the model spends `max_tokens` on reasoning and can leave `content` empty.
+With `reasoning_effort: "minimal"` and a budget of at least 400 tokens, the answer comes back complete.
 
-## Siguria
+## Security
 
-- Çelësat nuk ruhen në repo; lexohen nga thesari lokal ose mjedisi.
-- Refuzimi është pjesë e sjelljes: nxjerrja e skedarëve jashtë makines bllokohet me arsye të shfaqur.
-- Fatura është e verifikueshme: `GET /api/verifiko` → `{"ok": true, "n": …}`; ndryshimi i një rreshti e prish zinxhirin.
-## Nisja lokale (pa shtigje të makinës sime)
+- Keys are never stored in the repository; they are read from the local vault or the environment.
+- Refusal is part of the behaviour: extracting files off the machine is blocked, with the reason shown.
+- The receipt is verifiable: `GET /api/verifiko` → `{"ok": true, "n": …}`; changing one row breaks the chain.
 
-Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
+## Local start (no machine-specific paths)
 
-| Variabli | Defaulti | Roli |
+The repository depends on no absolute paths. Everything is set through the environment:
+
+| Variable | Default | Role |
 |---|---|---|
-| `OA_KORPUS` | `~/oa-korpus` | ku ndodhet `pyet.py` dhe `zet_query.py` |
-| `HALIM_LOG` | `~/.openclaw/state/halim-konzola.jsonl` | regjistri i faturave (zinxhiri) |
-| `HALIM_DEMO` | `demo-halimi-178s.mp4` pranë `server.py` | videoja që shërbehet te `/demo.mp4` |
-| `META_BASE_URL` / `META_API_KEY` / `META_MODEL` | — | vetëm për `scripts/meta_prova.py` |
+| `OA_KORPUS` | `~/oa-korpus` | where `pyet.py` and `zet_query.py` live |
+| `HALIM_LOG` | `~/.openclaw/state/halim-konsole.jsonl` | the receipt register (the chain) |
+| `HALIM_DEMO` | `demo-halimi-178s.mp4` next to `server.py` | the video served at `/demo.mp4` |
+| `META_BASE_URL` / `META_API_KEY` / `META_MODEL` | — | only for `scripts/meta_prova.py` |
 
 ```bash
 python3 server.py                      # http://127.0.0.1:8092
-python3 tests/test_server.py           # 5/5, pa rrjet
-python3 scripts/meta_prova.py 5        # matje e Meta Model API (kërkon çelës)
+python3 tests/test_server.py           # 5/5, offline
+python3 scripts/meta_prova.py 5        # Meta Model API measurement (needs a key)
 ```
 
-Çelësi i Meta-s nuk ruhet në repo: lexohet nga mjedisi ose nga thesari lokal.
+The Meta key is not stored in the repository: it is read from the environment or from the local vault.
