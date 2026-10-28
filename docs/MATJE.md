@@ -1,10 +1,10 @@
-# Matje reale — Meta Model API
+# Real measurements — Meta Model API
 
-**Data:** 26 tetor 2026 · **Modeli:** muse-wonder-1.0 · **Base:** https://api.meta.ai/v1
-**Parametrat:** temperature 0, max_tokens 900, reasoning_effort "minimal"
-**Burimi i pyetjeve:** banka e testeve (META-BANKA-50), 5 pyetjet e para.
+**Date:** 26 October 2026 · **Model:** muse-wonder-1.0 · **Base:** https://api.meta.ai/v1
+**Parameters:** temperature 0, max_tokens 900, reasoning_effort "minimal"
+**Question source:** the test bank (META-BANKA-50), first 5 questions.
 
-| ID | Latenca | Prompt tok | Completion tok | Ndera arsyetim | Gjatësia e përgjigjes |
+| ID | Latency | Prompt tok | Completion tok | Of which reasoning | Answer length |
 |---|---|---|---|---|---|
 | Q-01 | 9.88 s | 24 | 506 | 214 | 892 |
 | Q-02 | 7.76 s | 26 | 491 | 242 | 760 |
@@ -12,40 +12,42 @@
 | Q-04 | 5.52 s | 21 | 380 | 246 | 386 |
 | Q-05 | 12.24 s | 16 | 768 | 216 | 1584 |
 
-## Përmbledhje
+## Summary
 
-- **Latenca:** min 4.99 s · mesatare 8.08 s · max 12.24 s (5/5 përfunduan me finish_reason=stop).
-- **Tokenë:** 122 prompt · 2,585 completion · 1,270 prej tyre arsyetim (~49%).
-- **Përfundim praktik:** me reasoning_effort=minimal dhe buxhet ≥400 tokenësh, përgjigjja del e plotë; me buxhet 32 tokenësh content del bosh (e provuar: 32/32 në arsyetim).
+- **Latency:** min 4.99 s · mean 8.08 s · max 12.24 s (5/5 finished with finish_reason=stop).
+- **Tokens:** 122 prompt · 2,585 completion · 1,270 of them reasoning (~49%).
+- **Practical conclusion:** with reasoning_effort=minimal and a budget of at least 400 tokens the answer
+  comes back complete; with a budget of 32 tokens the content stays empty.
 
-## Përsëritja
+## Reproducing
 
-    META_BASE_URL=https://api.meta.ai/v1 META_API_KEY=<nga thesari> META_MODEL=muse-wonder-1.0 \
+    META_BASE_URL=https://api.meta.ai/v1 META_API_KEY=*** the vault> META_MODEL=muse-wonder-1.0 \
       python3 scripts/meta_prova.py 5
 
-Çelësi nuk ruhet në repo: lexohet nga thesari lokal ose nga mjedisi.
+The key is not stored in the repository: it is read from the local vault or the environment.
+
 ---
 
-## Modeli i dytë — `muse-spark-1.3` (27.10.2026)
+## Second model — muse-spark-1.3 (27.10.2026)
 
-**Roli:** propozon një deklaratë SQL nga qëllimi. **Nuk ekzekuton asgjë.**
-**Flamuri:** `HALIM_SQL_MODEL=meta`. Pa flamurin, `sql_meta.propozo()` kthen `None`
-dhe sjellja mbetet saktësisht si më parë — pa rrjet, pa kosto.
+**Role:** proposes an SQL statement from the intent. **It executes nothing.**
+**Flag:** HALIM_SQL_MODEL=meta. Without the flag, sql_meta.propozo() returns None
+and the behaviour stays exactly as before — no network, no cost.
 
-| Prova | Rezultati |
+| Evidence | Result |
 |---|---|
-| Pyetja | «Sa kontrata prokurimi ka gjatë 2025–2026?» |
-| SQL i propozuar | `SELECT COUNT(*) FROM AVOKATIM.ocds_awards WHERE date BETWEEN DATE '2025-01-01' AND DATE '2026-12-31'` |
-| Latenca | **1.785 s** |
-| Modeli | `muse-spark-1.3` |
-| **Porta** | **refuzon** — vetëm `SELECT 1` dhe `SHOW CATALOGS` lejohen në demo |
+| Question | "How many procurement contracts are there for 2025-2026?" |
+| Proposed SQL | SELECT COUNT(*) FROM AVOKATIM.ocds_awards WHERE date BETWEEN DATE '2025-01-01' AND ... |
+| Latency | **1.785 s** |
+| Model | muse-spark-1.3 |
+| **The gate** | **refuses** — only SELECT 1 and SHOW CATALOGS are allowed in the demo |
 
-Kjo është prova qendrore e tezës: modeli jep një deklaratë të saktë dhe të dobishme,
-por **nuk ka pushtet ta ekzekutojë**. `sql_meta.lejohet()` kthen `(False, ...)` dhe
-fatura e shënon refuzimin me arsyen.
+This is the central proof of the thesis: the model produces a correct and useful statement,
+but **it has no power to execute it**. sql_meta.lejohet() returns (False, ...) and the
+receipt records the refusal with the reason.
 
-**Dallim i matur midis modeleve:** `muse-wonder-1.0` (kuptim, tekst i lirë) mesatarisht
-8.08 s; `muse-spark-1.3` (dalje e strukturuar) **1.79 s**. Një rol më i ngushtë, më i shpejtë.
+**Measured difference between models:** muse-wonder-1.0 (understanding, free text) averages
+8.08 s; muse-spark-1.3 (structured output) **1.79 s**. A narrower role, and faster.
 
-Prova: `tests/test_sql_meta.py` — 4/4 (flamuri i fikur nuk bën rrjet; `DROP` refuzohet;
-`SELECT 1` lejohet; pastrimi i markdown-it nxjerr SQL-në).
+Evidence: tests/test_sql_meta.py — 4/4 (flag off makes no network call; DROP is refused;
+SELECT 1 is allowed; markdown stripping extracts the SQL).
