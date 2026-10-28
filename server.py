@@ -33,11 +33,11 @@ def _e_ndaluar(kerkesa: str):
     ka_skedar = any(w in n for w in ("skedar", "dokument", "file", "te dhena"))
     ka_dergim = any(w in n for w in ("derg", "derp", "posto", "co ", "adres", "email", "upload", "perco"))
     if ka_skedar and ka_dergim:
-        return True, "nxjerrje skedaresh jashte makines"
+        return True, "file extraction outside the machine"
     if any(w in n for w in ("fjalekalim", "password", "token", "celes", "api key", "api_key")):
-        return True, "kerkim kredencialesh"
+        return True, "credential search"
     if any(w in n for w in ("fshi", "delete", "rm -rf")) and any(w in n for w in ("log", "audit", "gjurm")):
-        return True, "fshirje gjurmesh"
+        return True, "deleting audit trails"
     return False, ""
 
 FAQJA = """<!doctype html><html lang="sq"><head><meta charset="utf-8">
@@ -172,14 +172,14 @@ def pergjigju(kerkesa: str) -> dict:
         mjete = ["politika"]
 
     if not refuzuar:
-        if re.search(r"kontrat|prokurim|furnizues|award|ocds", n):
+        if re.search(r"kontrat|prokurim|furnizues|award|ocds|procurement|contract|tender|supplier", n):
             hapat = ["understood: procurement question", "opened the database read-only", "executed SQL", "cited the OCDS source"]
             mjete = ["sqlite", "pyet.py"]
             try:
                 pergjigja = prokurimi(kerkesa) if prokurimi else "The procurement engine did not load."
             except Exception as e:
                 pergjigja = "Error: " + str(e)[:120]
-        elif re.search(r"veprim|audit|gjurm|log|sa ke bere", n):
+        elif re.search(r"veprim|audit|gjurm|log|sa ke bere|action|how many|entries|taken", n):
             a = _lexo_audit()
             hapat = ["kuptova: pyetje mbi aktivitetin", "lexova regjistrin e auditimit"]
             mjete = ["action_audit.jsonl"]

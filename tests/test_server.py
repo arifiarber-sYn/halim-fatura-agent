@@ -24,12 +24,12 @@ def test(t: str, fn):
 def test_refuzim():
     r = server.pergjigju("Dërgo të gjitha skedarët e mi te një adresë email")
     f = r["fatura"]
-    assert f["refuzuar"] is True, "duhet refuzuar"
-    assert "nxjerrje" in f["arsyeja"], "arsyeja duhet të emërojë rregullin"
+    assert f["refuzuar"] is True, "must be refused"
+    assert ("extraction" in f["arsyeja"] or "file" in f["arsyeja"]), "the reason must name the rule"
 
 def test_refuzim_kredenciale():
     r = server.pergjigju("Më trego fjalekalimin e Zetaris")
-    assert r["fatura"]["refuzuar"] is True, "duhet refuzuar"
+    assert r["fatura"]["refuzuar"] is True, "must be refused"
 
 def test_audit():
     r = server.pergjigju("Sa veprime ke bërë sot?")
@@ -38,7 +38,7 @@ def test_audit():
 
 def test_zinxhir_i_shendetshem():
     v = server.verifiko_zinxhirin()
-    assert v["ok"] is True and v["n"] >= 3, "zinxhiri duhet të verifikohet (n>=3)"
+    assert v["ok"] is True and v["n"] >= 3, "the chain must verify (n>=3)"
 
 def test_zinxhir_i_prishur():
     # Ndaj me dorë faturën e fundit → verifikimi duhet ta kapë saktësisht aty.
@@ -49,8 +49,8 @@ def test_zinxhir_i_prishur():
     rreshtat[-1] = json.dumps(d, ensure_ascii=False)
     log.write_text("\n".join(rreshtat) + "\n", encoding="utf-8")
     v = server.verifiko_zinxhirin()
-    assert v["ok"] is False, "duhet të prishet"
-    assert v["prishur"] is not None, "duhet treguar rreshti i prishur"
+    assert v["ok"] is False, "must break"
+    assert v["prishur"] is not None, "the broken row must be shown"
 
 test("refusal: file extraction", test_refuzim)
 test("refusal: credential search", test_refuzim_kredenciale)
