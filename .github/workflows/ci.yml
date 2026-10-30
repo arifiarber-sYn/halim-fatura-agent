@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Testet e konzolës (8/8, offline)
+      - name: Testet e konzolës (10/10, offline)
         working-directory: .
         run: python3 tests/test_server.py
 

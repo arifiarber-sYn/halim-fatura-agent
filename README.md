@@ -64,7 +64,7 @@ The repository depends on no absolute paths. Everything is set through the envir
 
 ```bash
 python3 server.py                      # http://127.0.0.1:8092
-python3 tests/test_server.py           # 8/8, offline (Albanian + English)
+python3 tests/test_server.py           # 10/10, offline (Albanian + English)
 python3 scripts/meta_prova.py 5        # Meta Model API measurement (needs a key)
 ```
 

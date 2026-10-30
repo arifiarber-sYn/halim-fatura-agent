@@ -63,7 +63,7 @@ Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
 
 ```bash
 python3 server.py                      # http://127.0.0.1:8092
-python3 tests/test_server.py           # 8/8, pa rrjet (shqip + anglisht)
+python3 tests/test_server.py           # 10/10, pa rrjet (shqip + anglisht)
 python3 scripts/meta_prova.py 5        # matje e Meta Model API (kërkon çelës)
 ```
 
