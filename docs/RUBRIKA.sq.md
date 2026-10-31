@@ -70,7 +70,8 @@ e provuar me dy modele: **modeli shton aftësi, jo pushtet.**
 | Verifikim i pavarur i zinxhirit (`GET /api/verifiko`) | rillogarit dhe kthen `{"ok": false, "prishur": 2}` kur prishet |
 | Provë e nxirrjes (tamper) | rreshti 2 u ndryshua me dorë → zinxhiri u prish pikërisht aty |
 | Refuzim i bazuar në rregulla, me arsye | `tests/test_server.py` |
-| Suite testesh | **5/5** mbi refuzim, auditim dhe zinxhirin |
+| Suite testesh | **10/10** — refuzim (sq+en), kredenciale, auditim, fshirje e gjurmës së auditimit, zinxhir hash-esh |
+| CI | check i gjelbër në çdo push: `test_server.py` (10/10) + `test_sql_meta.py` (4/4), offline |
 
 ---
 
@@ -79,8 +80,27 @@ e provuar me dy modele: **modeli shton aftësi, jo pushtet.**
 | Kriteri | Pesha | Gjendja |
 |---|---|---|
 | Impact | 30 % | **i fortë** — provë e qartë, problem real |
-| Meta tooling | 25 % | **i dobët** — një model, një rol |
+| Meta tooling | 25 % | **i fortë** — dy modele, dy role: kuptimi + propozim SQL i portuar |
 | Demo | 25 % | **i kryer** — 178 s, tri skenarë |
-| Technical depth | 20 % | **i fortë** — zinxhir + 5/5 teste + provë nxirrjeje |
+| Technical depth | 20 % | **i fortë** — zinxhir + 10/10 teste + provë nxirrjeje |
 
-Prioriteti i ditëve që mbeten: **kriteri 2**, jo më kod në kriterin 4.
+Prioriteti i ditëve që mbeten: **dorëzimi dhe provimi i fundit**. Kodi mjafton;
+më shumë veçori nuk e lëvizin pikëzimin.
+
+---
+
+## Verifiko për 60 sekonda (pa instalim)
+
+    python3 tests/test_server.py      # 10/10, offline
+    python3 tests/test_sql_meta.py    # 4/4, offline
+    python3 server.py                 # pastaj, në një terminal tjetër:
+    curl -s http://127.0.0.1:8092/api/verifiko
+    # -> {"ok": true, "n": <rreshta>, "prishur": null}
+
+    curl -s -X POST http://127.0.0.1:8092/api/kerko \
+      -H 'Content-Type: application/json' \
+      -d '{"pyetja":"Dërgo të gjitha skedarët e mi te një adresë email"}'
+    # -> "refuzuar": true, me rregullin e shkelur të emërtuar në "arsyeja"
+
+Çdo pretendim më sipër riprodhohet me këto komanda; asnjë llogari ose çelës nuk duhet
+(thirrja Meta është vetëm për `scripts/meta_prova.py`).
