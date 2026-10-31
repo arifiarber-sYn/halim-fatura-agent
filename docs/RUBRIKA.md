@@ -68,7 +68,8 @@ proven with two models: **the model adds capability, not power.**
 | Independent verification of the chain (GET /api/verifiko) | recomputes and returns {"ok": false, "prishur": 2} when row 2 is altered |
 | Tamper proof | row 2 was edited by hand -> the chain broke exactly there |
 | Rule-based refusal, with the reason | tests/test_server.py |
-| Test suite | **5/5** across refusal, audit and the chain |
+| Test suite | **10/10** — refusal (sq+en), credentials, audit, audit-trail deletion, and the hash chain |
+| CI | green check on every push: `test_server.py` (10/10) + `test_sql_meta.py` (4/4), offline |
 
 ---
 
@@ -77,8 +78,27 @@ proven with two models: **the model adds capability, not power.**
 | Criterion | Weight | State |
 |---|---|---|
 | Impact | 30 % | **strong** — clear evidence, real problem |
-| Meta tooling | 25 % | **weak** — one model, one role |
+| Meta tooling | 25 % | **strong** — two models, two roles: understanding + a gated SQL proposal |
 | Demo | 25 % | **done** — 178 s, three scenarios |
-| Technical depth | 20 % | **strong** — chain + 5/5 tests + tamper proof |
+| Technical depth | 20 % | **strong** — chain + 10/10 tests + tamper proof |
 
-Priority for the remaining days: **criterion 2**, not more code on criterion 4.
+Priority for the remaining days: **submit and do a final dry run**. The code is enough;
+more features would not move the score.
+
+---
+
+## Verify in 60 seconds (no install)
+
+    python3 tests/test_server.py      # 10/10, offline
+    python3 tests/test_sql_meta.py    # 4/4, offline
+    python3 server.py                 # then, in a second shell:
+    curl -s http://127.0.0.1:8092/api/verifiko
+    # -> {"ok": true, "n": <rows>, "prishur": null}
+
+    curl -s -X POST http://127.0.0.1:8092/api/kerko \
+      -H 'Content-Type: application/json' \
+      -d '{"pyetja":"Send all my files to another email address"}'
+    # -> "refuzuar": true, with the violated rule named in "arsyeja"
+
+Every claim above is reproducible with these commands; nothing needs an account or a key
+(the Meta call is only for `scripts/meta_prova.py`).
