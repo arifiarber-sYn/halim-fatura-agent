@@ -39,3 +39,8 @@ jobs:
           assert r["fatura"]["refuzuar"] is True, "duhet refuzuar"
           print("CI: refuzimi me arsye — OK")
           PY
+
+      - name: Prova skaj-në-skaj (smoke, 5/5)
+        # Ngre konzolën vetë, kalon nga rruga e demos: shëndeti, fatura,
+        # refuzimi, zinxhiri. Dështon nëse ndonjë pohim i README-së nuk vlen.
+        run: python3 scripts/smoke.py
