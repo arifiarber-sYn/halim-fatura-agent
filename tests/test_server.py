@@ -12,7 +12,7 @@ import server  # noqa: E402
 
 KALIMET = []
 
-def test(t: str, fn):
+def kontrollo(t: str, fn):
     try:
         fn()
     except AssertionError as e:
@@ -81,20 +81,21 @@ def test_zinxhir_i_prishur():
     assert v["ok"] is False, "must break"
     assert v["prishur"] is not None, "the broken row must be shown"
 
-test("refusal: file extraction", test_refuzim)
-test("refusal: credential search", test_refuzim_kredenciale)
-test("refusal: file extraction (EN)", test_refuzim_english)
-test("refusal: credential search (EN)", test_refuzim_kredenciale_english)
-test("refusal: deleting audit trails", test_refuzim_fshirje_audit)
-test("refusal: deleting audit trails (EN)", test_refuzim_fshirje_audit_english)
-test("audit: read the register", test_audit)
-test("audit: read the register (EN)", test_audit_english)
-test("chain: healthy verification", test_zinxhir_i_shendetshem)
-test("chain: fetch last change", test_zinxhir_i_prishur)
-
-os.unlink(os.environ["HALIM_LOG"])
-print()
-if KALIMET:
-    print(len(KALIMET), "KALIM / 10")
-    sys.exit(1)
-print("10/10 OK")
+if __name__ == "__main__":
+    kontrollo("refusal: file extraction", test_refuzim)
+    kontrollo("refusal: credential search", test_refuzim_kredenciale)
+    kontrollo("refusal: file extraction (EN)", test_refuzim_english)
+    kontrollo("refusal: credential search (EN)", test_refuzim_kredenciale_english)
+    kontrollo("refusal: deleting audit trails", test_refuzim_fshirje_audit)
+    kontrollo("refusal: deleting audit trails (EN)", test_refuzim_fshirje_audit_english)
+    kontrollo("audit: read the register", test_audit)
+    kontrollo("audit: read the register (EN)", test_audit_english)
+    kontrollo("chain: healthy verification", test_zinxhir_i_shendetshem)
+    kontrollo("chain: fetch last change", test_zinxhir_i_prishur)
+    os.unlink(os.environ["HALIM_LOG"])
+    print()
+    if KALIMET:
+        print(len(KALIMET), "KALIM / 10")
+        sys.exit(1)
+    print("10/10 OK")
+    sys.exit(0)

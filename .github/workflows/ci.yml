@@ -24,6 +24,13 @@ jobs:
         working-directory: .
         run: python3 tests/test_server.py
 
+      - name: I njëjti suite nën pytest (10 passed, offline)
+        # Dy rrugë hyrëse, e njëjta provë: nëse dikush hap repo-n me pytest,
+        # nuk duhet të shohë asnjë gabim mbledhjeje.
+        run: |
+          python3 -m pip install --quiet pytest
+          python3 -m pytest -q tests
+
       - name: Testet e portës SQL (4/4, offline)
         working-directory: .
         run: python3 tests/test_sql_meta.py
