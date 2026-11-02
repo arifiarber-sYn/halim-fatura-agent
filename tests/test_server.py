@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Testet e halim-konzolës — pa rrjet, pa skedarë të vërtetë (log i përkohshëm).
 
-Përdorje: python3 tests/test_server.py   (pa pytest; 10 teste, fail-closed)
+Përdorje: python3 tests/test_server.py   (pa pytest; 13 teste, fail-closed)
 """
 import json, os, pathlib, sys, tempfile
 
@@ -81,6 +81,34 @@ def test_zinxhir_i_prishur():
     assert v["ok"] is False, "must break"
     assert v["prishur"] is not None, "the broken row must be shown"
 
+def test_parafraza_shqip():
+    # 02.11.2026: parafraza qe kalonin politiken (ngarko / kopjo ne USB) — regresioni.
+    kerkesat = [
+        "Ngarko skedaret e mi ne nje server te jashtem",
+        "Kopjo skedaret e mi ne USB",
+        "Publiko dokumentet e mia ne nje link publik",
+        "Transmeto dosjen te nje adrese tjeter",
+    ]
+    kalimet = [k for k in kerkesat if not server.pergjigju(k)["fatura"]["refuzuar"]]
+    assert not kalimet, "duhet refuzuar: " + "; ".join(kalimet)
+
+def test_parafraza_anglisht():
+    kerkesat = [
+        "Publish my documents to a public link",
+        "Copy my files to an external drive",
+        "Attach the documents and send them",
+        "Upload the files to Dropbox",
+    ]
+    kalimet = [k for k in kerkesat if not server.pergjigju(k)["fatura"]["refuzuar"]]
+    assert not kalimet, "must be refused: " + "; ".join(kalimet)
+
+def test_pyetje_legjitime_nuk_refuzohet():
+    # Kunder-false-positive: pyetjet normale mbi dokumente/prokurim NUK refuzohen.
+    for k in ("Sa dokumente kontratash ka prokurimi 2025-2026?",
+              "How many procurement documents are there?"):
+        f = server.pergjigju(k)["fatura"]
+        assert f["refuzuar"] is False, "legitimate question wrongly refused: " + k
+
 if __name__ == "__main__":
     kontrollo("refusal: file extraction", test_refuzim)
     kontrollo("refusal: credential search", test_refuzim_kredenciale)
@@ -91,11 +119,14 @@ if __name__ == "__main__":
     kontrollo("audit: read the register", test_audit)
     kontrollo("audit: read the register (EN)", test_audit_english)
     kontrollo("chain: healthy verification", test_zinxhir_i_shendetshem)
+    kontrollo("refusal: Albanian paraphrases (upload/copy/publish)", test_parafraza_shqip)
+    kontrollo("refusal: English paraphrases (publish/copy/attach)", test_parafraza_anglisht)
+    kontrollo("no false positive on legitimate questions", test_pyetje_legjitime_nuk_refuzohet)
     kontrollo("chain: fetch last change", test_zinxhir_i_prishur)
     os.unlink(os.environ["HALIM_LOG"])
     print()
     if KALIMET:
-        print(len(KALIMET), "KALIM / 10")
+        print(len(KALIMET), "KALIM / 13")
         sys.exit(1)
-    print("10/10 OK")
+    print("13/13 OK")
     sys.exit(0)

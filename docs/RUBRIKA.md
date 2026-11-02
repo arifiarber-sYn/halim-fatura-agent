@@ -68,8 +68,8 @@ proven with two models: **the model adds capability, not power.**
 | Independent verification of the chain (GET /api/verifiko) | recomputes and returns {"ok": false, "prishur": 2} when row 2 is altered |
 | Tamper proof | row 2 was edited by hand -> the chain broke exactly there |
 | Rule-based refusal, with the reason | tests/test_server.py |
-| Test suite | **10/10** — refusal (sq+en), credentials, audit, audit-trail deletion, and the hash chain |
-| CI | green check on every push: `test_server.py` (10/10) + `test_sql_meta.py` (4/4), offline |
+| Test suite | **13/13** — refusal (sq+en), credentials, audit, audit-trail deletion, and the hash chain |
+| CI | green check on every push: `test_server.py` (13/13) + `test_sql_meta.py` (4/4), offline |
 
 ---
 
@@ -80,7 +80,7 @@ proven with two models: **the model adds capability, not power.**
 | Impact | 30 % | **strong** — clear evidence, real problem |
 | Meta tooling | 25 % | **strong** — two models, two roles: understanding + a gated SQL proposal |
 | Demo | 25 % | **done** — 178 s, three scenarios |
-| Technical depth | 20 % | **strong** — chain + 10/10 tests + tamper proof |
+| Technical depth | 20 % | **strong** — chain + 13/13 tests + tamper proof |
 
 Priority for the remaining days: **submit and do a final dry run**. The code is enough;
 more features would not move the score.
@@ -89,7 +89,7 @@ more features would not move the score.
 
 ## Verify in 60 seconds (no install)
 
-    python3 tests/test_server.py      # 10/10, offline
+    python3 tests/test_server.py      # 13/13, offline
     python3 tests/test_sql_meta.py    # 4/4, offline
     python3 server.py                 # then, in a second shell:
     curl -s http://127.0.0.1:8092/api/verifiko

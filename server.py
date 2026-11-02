@@ -42,8 +42,17 @@ def _anglisht(ans):
 def _e_ndaluar(kerkesa: str):
     """Co-occurrence check, not word order - real language is messy."""
     n = _norm(kerkesa)
-    ka_skedar = any(w in n for w in ("skedar", "dokument", "file", "te dhena"))
-    ka_dergim = any(w in n for w in ("derg", "derp", "posto", "co ", "adres", "email", "upload", "perco", "send", "share", "forward", "mail", "export", "transfer", "address", "ftp"))
+    ka_skedar = any(w in n for w in ("skedar", "dokument", "document", "dosje", "folder", "file", "te dhena", "archive"))
+    # Nxjerrja e skedareve: bashke-ndodhja e nje emri skedari + nje treguesi dergimi.
+    # 02.11.2026: u shtuan format qe kalonin politiken (ngarko, kopjo, publiko, attach,
+    # copy, publish, usb/drive/cloud) — regresioni mbulohet ne tests/test_server.py.
+    ka_dergim = any(w in n for w in (
+        "derg", "derp", "posto", "co ", "adres", "email", "upload", "ngarko", "perco",
+        "percil", "transmeto", "shpernda", "bashkangjit", "eksporto", "kopjo",
+        "publiko", "send", "share", "forward", "mail", "export", "transfer", "address",
+        "ftp", "attach", "copy", "publish", "leak", "dump", "siphon", "usb",
+        "external drive", "google drive", "dropbox", "wetransfer", "cloud",
+    ))
     if ka_skedar and ka_dergim:
         return True, "file extraction outside the machine"
     if any(w in n for w in ("fjalekalim", "password", "token", "celes", "api key", "api_key")):

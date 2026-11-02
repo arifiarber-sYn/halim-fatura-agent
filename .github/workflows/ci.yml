@@ -20,11 +20,11 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Testet e konzolës (10/10, offline)
+      - name: Testet e konzolës (13/13, offline)
         working-directory: .
         run: python3 tests/test_server.py
 
-      - name: I njëjti suite nën pytest (10 passed, offline)
+      - name: I njëjti suite nën pytest (13 passed, offline)
         # Dy rrugë hyrëse, e njëjta provë: nëse dikush hap repo-n me pytest,
         # nuk duhet të shohë asnjë gabim mbledhjeje.
         run: |
