@@ -70,6 +70,18 @@ python3 -m pytest -q tests             # the same suite under pytest: 13 passed
 python3 scripts/smoke.py               # 5/5 end-to-end: boots the console, then checks
                                        #   health, a receipt, the refusal, and the chain
 python3 scripts/meta_prova.py 5        # Meta Model API measurement (needs a key)
+python3 scripts/check_submission.py     # submission self-check, 7/7 (see below)
 ```
+
+## Self-check (the surface a reviewer touches)
+
+```bash
+META_API_KEY=<from the vault> python3 scripts/check_submission.py
+```
+
+One command checks the public repository, the raw README, the demo video (HTTP + duration),
+the Meta Model API (`/models` and one completion), and the test suite — PASS/FAIL per line,
+exit code 0 only when everything is green. Latest result:
+[`docs/VERIFIKIM-2026-11-03.md`](docs/VERIFIKIM-2026-11-03.md) — 7/7.
 
 The Meta key is not stored in the repository: it is read from the environment or from the local vault.
