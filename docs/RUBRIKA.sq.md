@@ -55,7 +55,7 @@ e provuar me dy modele: **modeli shton aftësi, jo pushtet.**
 
 | Elementi | Vlera |
 |---|---|
-| Video | `demo-halimi-178s.mp4` — **178 s** (nën kufirin 3-minutësh) |
+| Video | `demo-halimi-en-v3.mp4` — **66 s** (nën kufirin 3-minutësh) |
 | Struktura | tri skenarë: pyetje reale → veprim → refuzim |
 | Zë | po, narracion |
 | Akses | link i hapur në README, i lexueshëm pa llogari |
@@ -81,7 +81,7 @@ e provuar me dy modele: **modeli shton aftësi, jo pushtet.**
 |---|---|---|
 | Impact | 30 % | **i fortë** — provë e qartë, problem real |
 | Meta tooling | 25 % | **i fortë** — dy modele, dy role: kuptimi + propozim SQL i portuar |
-| Demo | 25 % | **i kryer** — 178 s, tri skenarë |
+| Demo | 25 % | **i kryer** — 66 s, tri skenarë |
 | Technical depth | 20 % | **i fortë** — zinxhir + 13/13 teste + provë nxirrjeje |
 
 Prioriteti i ditëve që mbeten: **dorëzimi dhe provimi i fundit**. Kodi mjafton;

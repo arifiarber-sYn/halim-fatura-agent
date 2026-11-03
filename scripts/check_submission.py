@@ -25,7 +25,7 @@ import urllib.error
 import urllib.request
 
 REPO = "arifiarber-sYn/halim-fatura-agent"
-VIDEO = "https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-178s.mp4"
+VIDEO = "https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-en-v3.mp4"
 MAX_SECONDS = 180.0
 TIMEOUT = 30
 

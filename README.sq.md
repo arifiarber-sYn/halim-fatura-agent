@@ -10,7 +10,7 @@ problem statement *Build for Your World*.
 
 ## Demo
 
-- Video 3-minutëshe: [`demo-halimi-178s.mp4`](demo-halimi-178s.mp4)
+- Video 3-minutëshe: [`demo-halimi-en-v3.mp4`](demo-halimi-en-v3.mp4)
 - Matje reale me Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
 
 ## Tri shtresa
@@ -58,7 +58,7 @@ Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
 |---|---|---|
 | `OA_KORPUS` | `~/oa-korpus` | ku ndodhet `pyet.py` dhe `zet_query.py` |
 | `HALIM_LOG` | `~/.openclaw/state/halim-konzola.jsonl` | regjistri i faturave (zinxhiri) |
-| `HALIM_DEMO` | `demo-halimi-178s.mp4` pranë `server.py` | videoja që shërbehet te `/demo.mp4` |
+| `HALIM_DEMO` | `demo-halimi-en-v3.mp4` pranë `server.py` | videoja që shërbehet te `/demo.mp4` |
 | `META_BASE_URL` / `META_API_KEY` / `META_MODEL` | — | vetëm për `scripts/meta_prova.py` |
 
 ```bash

@@ -53,7 +53,7 @@ proven with two models: **the model adds capability, not power.**
 
 | Element | Value |
 |---|---|
-| Video | demo-halimi-178s.mp4 — **178 s** (under the 3-minute limit) |
+| Video | demo-halimi-en-v3.mp4 — **66 s** (under the 3-minute limit) |
 | Structure | three scenarios: a real question -> action -> refusal |
 | Audio | yes, narration |
 | Access | open link in the README, readable without an account |
@@ -79,7 +79,7 @@ proven with two models: **the model adds capability, not power.**
 |---|---|---|
 | Impact | 30 % | **strong** — clear evidence, real problem |
 | Meta tooling | 25 % | **strong** — two models, two roles: understanding + a gated SQL proposal |
-| Demo | 25 % | **done** — 178 s, three scenarios |
+| Demo | 25 % | **done** — 66 s, three scenarios |
 | Technical depth | 20 % | **strong** — chain + 13/13 tests + tamper proof |
 
 Priority for the remaining days: **submit and do a final dry run**. The code is enough;
