@@ -62,7 +62,7 @@ def _e_ndaluar(kerkesa: str):
     return False, ""
 
 FAQJA = """<!doctype html><html lang="sq"><head><meta charset="utf-8">
-<title>Halimi — agjenti me fatura</title>
+<title>Halimi — an agent with receipts</title>
 <style>body{font:16px system-ui;max-width:860px;margin:40px auto;padding:0 16px;background:#0f1115;color:#e8e8e8}
 input{width:100%;padding:12px;font-size:16px;background:#171a21;color:#fff;border:1px solid #333;border-radius:6px}
 button{padding:12px 20px;margin-top:8px;font-size:16px;background:#2d6cdf;color:#fff;border:0;border-radius:6px;cursor:pointer}
@@ -70,7 +70,7 @@ button{padding:12px 20px;margin-top:8px;font-size:16px;background:#2d6cdf;color:
 .fatura{border-left:3px solid #2d6cdf}
 .refuzim{border-left:3px solid #d9534f}
 code{color:#9fd3ff}</style></head><body>
-<h1>Halimi — agjenti me fatura</h1>
+<h1>Halimi — an agent with receipts</h1>
 <p>Ask something. The agent acts and leaves proof for every step.</p>
 <input id="q" value="Sa kontrata ka prokurimi 2025-2026?">
 <button onclick="kerko()">Ask</button> <button onclick="zet()">Zetaris live</button>
@@ -87,7 +87,7 @@ async function zet(){
   const d=await r.json();
   const out=document.getElementById('out'); out.textContent='';
   const c=document.createElement('div'); c.className='karta';
-  c.textContent='ZETARIS LIVE'+NL+'ok: '+d.ok+NL+'rreshta: '+JSON.stringify(d.rreshta)+NL+'ms: '+d.ms+NL+'via: '+d.via;
+  c.textContent='ZETARIS LIVE'+NL+'ok: '+d.ok+NL+'rows: '+JSON.stringify(d.rreshta)+NL+'ms: '+d.ms+NL+'via: '+d.via;
   out.appendChild(c);
 }
 function shfaq(d){
@@ -95,12 +95,12 @@ function shfaq(d){
   if(d.pergjigja){const c=document.createElement('div');c.className='karta';c.textContent=d.pergjigja;out.appendChild(c);}
   const f=d.fatura||{};
   const c=document.createElement('div'); c.className='karta '+(f.refuzuar?'refuzim':'fatura');
-  let t='FATURA'+NL;
+  let t='RECEIPT'+NL;
   (f.hapat||[]).forEach(function(x,i){t+=(i+1)+'. '+x+NL;});
-  t+='mjete: '+((f.mjete||[]).join(', ')||'-')+NL;
-  t+='kohe: '+(f.ms||0)+' ms'+NL;
-  t+='refuzuar: '+(f.refuzuar?('PO - '+f.arsyeja):'jo')+NL;
-  t+='prove: '+(f.hash||'').slice(0,24)+'...';
+  t+='tools: '+((f.mjete||[]).join(', ')||'-')+NL;
+  t+='time: '+(f.ms||0)+' ms'+NL;
+  t+='refused: '+(f.refuzuar?('yes - '+f.arsyeja):'no')+NL;
+  t+='proof: '+(f.hash||'').slice(0,24)+'...';
   c.textContent=t; out.appendChild(c);
 }
 </script></body></html>"""
@@ -190,7 +190,7 @@ def pergjigju(kerkesa: str) -> dict:
     if i_ndaluar:
         refuzuar, arsye = True, arsye_p
         hapat = ["understood the request", "checked the security policy", "refused: " + arsye_p]
-        mjete = ["politika"]
+        mjete = ["policy"]
 
     if not refuzuar:
         if re.search(r"kontrat|prokurim|furnizues|award|ocds|procurement|contract|tender|supplier", n):

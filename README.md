@@ -11,7 +11,7 @@ theme *Build for Your World*.
 ## Demo
 
 - Full demo (178 s, under the 3-minute limit): [`demo-halimi-178s.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-178s.mp4)
-- 60-second cut: [`demo-halimi-en.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-en.mp4)
+- 60-second cut: [`demo-halimi-en-v3.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-en-v3.mp4)
 - Real measurements against the Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
 
 ## Three layers
