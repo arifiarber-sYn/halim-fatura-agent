@@ -10,8 +10,7 @@ theme *Build for Your World*.
 
 ## Demo
 
-- Full demo (178 s, under the 3-minute limit): [`demo-halimi-178s.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-178s.mp4)
-- 60-second cut: [`demo-halimi-en-v3.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-en-v3.mp4)
+- Full demo (66 s, English narration, under the 3-minute limit): [`demo-halimi-en-v3.mp4`](https://cdn.jsdelivr.net/gh/arifiarber-sYn/halim-fatura-agent@master/demo-halimi-en-v3.mp4)
 - Real measurements against the Meta Model API: [`docs/MATJE.md`](docs/MATJE.md)
 
 ## Three layers
@@ -60,7 +59,7 @@ The repository depends on no absolute paths. Everything is set through the envir
 |---|---|---|
 | `OA_KORPUS` | `~/oa-korpus` | where `pyet.py` and `zet_query.py` live |
 | `HALIM_LOG` | `~/.openclaw/state/halim-konsole.jsonl` | the receipt register (the chain) |
-| `HALIM_DEMO` | `demo-halimi-178s.mp4` next to `server.py` | the video served at `/demo.mp4` |
+| `HALIM_DEMO` | `demo-halimi-en-v3.mp4` next to `server.py` | the video served at `/demo.mp4` |
 | `META_BASE_URL` / `META_API_KEY` / `META_MODEL` | — | only for `scripts/meta_prova.py` |
 
 ```bash

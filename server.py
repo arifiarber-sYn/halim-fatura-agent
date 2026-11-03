@@ -242,7 +242,7 @@ class H(BaseHTTPRequestHandler):
         if self.path == "/demo.mp4":
             f = pathlib.Path(os.environ.get(
                 "HALIM_DEMO",
-                str(pathlib.Path(__file__).resolve().parent / "demo-halimi-178s.mp4")))
+                str(pathlib.Path(__file__).resolve().parent / "demo-halimi-en-v3.mp4")))
             if not f.exists():
                 return self._d(b"pa video", "text/plain", 404)
             b = f.read_bytes()
