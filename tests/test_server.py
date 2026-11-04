@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Testet e halim-konzolës — pa rrjet, pa skedarë të vërtetë (log i përkohshëm).
 
-Përdorje: python3 tests/test_server.py   (pa pytest; 13 teste, fail-closed)
+Përdorje: python3 tests/test_server.py   (pa pytest; 14 teste, fail-closed)
 """
 import json, os, pathlib, sys, tempfile
 
@@ -109,6 +109,20 @@ def test_pyetje_legjitime_nuk_refuzohet():
         f = server.pergjigju(k)["fatura"]
         assert f["refuzuar"] is False, "legitimate question wrongly refused: " + k
 
+def test_fatura_nuk_genjen_kur_mjeti_s_mungon():
+    # Integriteti (04.11): nese motori i prokurimit s'eshte ngarkuar, fatura NUK
+    # guxon te pohoje "executed SQL" — duhet te thote te verteten dhe arsyen.
+    origjinal = server.prokurimi
+    server.prokurimi = None
+    try:
+        f = server.pergjigju("Sa kontrata ka prokurimi 2025-2026?")["fatura"]
+    finally:
+        server.prokurimi = origjinal
+    assert not any("executed SQL" in h for h in f["hapat"]), "receipt claims SQL it never ran"
+    assert "pyet.py" not in f["mjete"], "receipt cites a tool that did not run"
+    assert f.get("gabim"), "the failure reason must be in the receipt"
+    assert "no data was read" in " ".join(f["hapat"]), "the step must say nothing was read"
+
 if __name__ == "__main__":
     kontrollo("refusal: file extraction", test_refuzim)
     kontrollo("refusal: credential search", test_refuzim_kredenciale)
@@ -122,11 +136,12 @@ if __name__ == "__main__":
     kontrollo("refusal: Albanian paraphrases (upload/copy/publish)", test_parafraza_shqip)
     kontrollo("refusal: English paraphrases (publish/copy/attach)", test_parafraza_anglisht)
     kontrollo("no false positive on legitimate questions", test_pyetje_legjitime_nuk_refuzohet)
+    kontrollo("receipt does not lie when the tool is missing", test_fatura_nuk_genjen_kur_mjeti_s_mungon)
     kontrollo("chain: fetch last change", test_zinxhir_i_prishur)
     os.unlink(os.environ["HALIM_LOG"])
     print()
     if KALIMET:
-        print(len(KALIMET), "KALIM / 13")
+        print(len(KALIMET), "KALIM / 14")
         sys.exit(1)
-    print("13/13 OK")
+    print("14/14 OK")
     sys.exit(0)

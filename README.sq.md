@@ -50,6 +50,10 @@ Me `reasoning_effort: "minimal"` dhe buxhet ≥400 tokenësh, përgjigjja del e 
 - Çelësat nuk ruhen në repo; lexohen nga thesari lokal ose mjedisi.
 - Refuzimi është pjesë e sjelljes: nxjerrja e skedarëve jashtë makines bllokohet me arsye të shfaqur.
 - Fatura është e verifikueshme: `GET /api/verifiko` → `{"ok": true, "n": …}`; ndryshimi i një rreshti e prish zinxhirin.
+- Fatura nuk shpik hapa: hapi shkruhet vetëm pasi mjeti përgjigjet. Nëse shtresa e të dhënave mungon,
+  fatura e thotë — `"gabim": "procurement engine not loaded: OA_KORPUS is missing"`, `mjete` bosh dhe hapi
+  *«no data was read, no number is claimed»* — në vend që të pohojë një pyetësor që s'u xhirua kurrë.
+  (Gjetur në provën e ftohtë, 4 nëntor: kloni i freskët tregon dështimin e ndershëm, jo sukses të rremë.)
 ## Nisja lokale (pa shtigje të makinës sime)
 
 Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
@@ -63,7 +67,7 @@ Repo-ja nuk varet nga asnjë shteg absolut. Të gjitha vendosen me mjedis:
 
 ```bash
 python3 server.py                      # http://127.0.0.1:8092
-python3 tests/test_server.py           # 13/13, pa rrjet (shqip + anglisht)
+python3 tests/test_server.py           # 14/14, pa rrjet (shqip + anglisht)
 python3 scripts/smoke.py               # 5/5 skaj-në-skaj: ngre konzolën dhe kontrollon
                                        #   shëndetin, një faturë, refuzimin, zinxhirin
 python3 scripts/meta_prova.py 5        # matje e Meta Model API (kërkon çelës)

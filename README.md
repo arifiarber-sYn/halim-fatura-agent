@@ -50,6 +50,10 @@ With `reasoning_effort: "minimal"` and a budget of at least 400 tokens, the answ
 - Keys are never stored in the repository; they are read from the local vault or the environment.
 - Refusal is part of the behaviour: extracting files off the machine is blocked, with the reason shown.
 - The receipt is verifiable: `GET /api/verifiko` → `{"ok": true, "n": …}`; changing one row breaks the chain.
+- The receipt does not invent steps: a step is written only after the tool answers. If the data layer is
+  missing, the receipt says so — `"gabim": "procurement engine not loaded: OA_KORPUS is missing"`, an empty
+  `mjete` list, and the step *"no data was read, no number is claimed"* — instead of claiming a query that
+  never ran. (Found in a cold-start test, 4 Nov: a fresh clone shows the honest failure, not a fake success.)
 
 ## Local start (no machine-specific paths)
 
@@ -64,8 +68,8 @@ The repository depends on no absolute paths. Everything is set through the envir
 
 ```bash
 python3 server.py                      # http://127.0.0.1:8092
-python3 tests/test_server.py           # 13/13, offline (Albanian + English)
-python3 -m pytest -q tests             # the same suite under pytest: 13 passed
+python3 tests/test_server.py           # 14/14, offline (Albanian + English)
+python3 -m pytest -q tests             # the same suite under pytest: 14 passed
 python3 scripts/smoke.py               # 5/5 end-to-end: boots the console, then checks
                                        #   health, a receipt, the refusal, and the chain
 python3 scripts/meta_prova.py 5        # Meta Model API measurement (needs a key)

@@ -185,6 +185,7 @@ def pergjigju(kerkesa: str) -> dict:
     hapat, mjete = [], []
     pergjigja = None
     refuzuar, arsye = False, ""
+    gabim = ""
 
     i_ndaluar, arsye_p = _e_ndaluar(kerkesa)
     if i_ndaluar:
@@ -194,13 +195,20 @@ def pergjigju(kerkesa: str) -> dict:
 
     if not refuzuar:
         if re.search(r"kontrat|prokurim|furnizues|award|ocds|procurement|contract|tender|supplier", n):
-            hapat = ["understood: procurement question", "opened the database read-only", "executed SQL", "cited the OCDS source"]
-            mjete = ["sqlite", "pyet.py"]
+            # Ndergiegjesi e fatures: hapat shkruhen VETEM pasi mjeti pergjigjet.
+            # (Me pare fatura pohonte "executed SQL" edhe kur motori s'ishte ngarkuar.)
             try:
+                if prokurimi is None:
+                    raise RuntimeError("procurement engine not loaded: OA_KORPUS is missing")
                 _k = kerkesa if re.search(r"kontrat|prokurim|furnizues", _norm(kerkesa)) else "Sa kontrata ka prokurimi 2025-2026?"
-                pergjigja = _anglisht(prokurimi(_k)) if prokurimi else "The procurement engine did not load."
+                pergjigja = _anglisht(prokurimi(_k))
+                hapat = ["understood: procurement question", "opened the database read-only", "executed SQL", "cited the OCDS source"]
+                mjete = ["sqlite", "pyet.py"]
             except Exception as e:
-                pergjigja = "Error: " + str(e)[:120]
+                gabim = str(e)[:120]
+                hapat = ["understood: procurement question", "the tool did not answer", "no data was read, no number is claimed"]
+                mjete = []
+                pergjigja = "Error: " + gabim
         elif re.search(r"veprim|audit|gjurm|log|sa ke bere|action|how many|entries|taken", n):
             a = _lexo_audit()
             hapat = ["kuptova: pyetje mbi aktivitetin", "lexova regjistrin e auditimit"]
@@ -213,7 +221,8 @@ def pergjigju(kerkesa: str) -> dict:
 
     ms = int((time.time() - t0) * 1000)
     fat = {"kerkesa": kerkesa[:300], "hapat": hapat, "mjete": mjete, "ms": ms,
-           "refuzuar": refuzuar, "arsyeja": arsye, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+           "refuzuar": refuzuar, "arsyeja": arsye, "gabim": gabim,
+           "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
     fat["prev"] = _fundi_i_zinxhirit()
     fat["hash"] = _hash(fat)
     try:
