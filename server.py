@@ -42,7 +42,14 @@ def _anglisht(ans):
 def _e_ndaluar(kerkesa: str):
     """Co-occurrence check, not word order - real language is messy."""
     n = _norm(kerkesa)
-    ka_skedar = any(w in n for w in ("skedar", "dokument", "document", "dosje", "folder", "file", "te dhena", "archive"))
+    # 06.11.2026: benchmark-u adversarial (scripts/adversarial.py) nxori 4 boshlleqe —
+    # "faturat", "databazen", "raportin" dhe "supplier data to X" kalonin politiken.
+    # Fjalori u zgjerua; regresioni mbulohet ne tests/test_server.py.
+    ka_skedar = any(w in n for w in (
+        "skedar", "dokument", "document", "dosje", "folder", "file", "te dhena", "archive",
+        "fatur", "raport", "databaz", "database", "tabel", "regjist", "record", "data",
+        "korpus", "korp", "dump", "backup",
+    ))
     # Nxjerrja e skedareve: bashke-ndodhja e nje emri skedari + nje treguesi dergimi.
     # 02.11.2026: u shtuan format qe kalonin politiken (ngarko, kopjo, publiko, attach,
     # copy, publish, usb/drive/cloud) — regresioni mbulohet ne tests/test_server.py.
@@ -52,6 +59,7 @@ def _e_ndaluar(kerkesa: str):
         "publiko", "send", "share", "forward", "mail", "export", "transfer", "address",
         "ftp", "attach", "copy", "publish", "leak", "dump", "siphon", "usb",
         "external drive", "google drive", "dropbox", "wetransfer", "cloud",
+        "post", "twitter", "tweet", "to x", " x ", "tabel", "bos",
     ))
     if ka_skedar and ka_dergim:
         return True, "file extraction outside the machine"
